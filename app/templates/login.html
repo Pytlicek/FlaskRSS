@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>FlaskRSS</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}"/>
+    <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='jquery-3.5.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</head>
+<body>
+<div class="row col-lg-4 offset-4 sticky-top">
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div id="flash_message" class="col-md-12 alert alert-{{ category }} ">{{ message }}</div>
+            <script type="application/javascript">
+            setTimeout(function(){
+              if ($('#flash_message').length > 0) {
+                $('#flash_message').remove();
+              }
+            }, 3000)
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+</div>
+<div id="login">
+    <h3 class="text-center text-white pt-5">Login form</h3>
+    <div class="container">
+        <div id="login-row" class="row justify-content-center align-items-center">
+            <div id="login-column" class="col-md-6">
+                <div id="login-box" class="col-md-12">
+                    <form id="login-form" class="form" action="" method="post">
+                        <h3 class="text-center text-info">Login</h3>
+                        <div class="form-group">
+                            <label for="username" class="text-info">{{ form.username.label }}</label><br>
+                            {{ form.username(class_="form-control", size=50, required='required') }}
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="text-info">{{ form.password.label }}</label><br>
+                            {{ form.password(class_="form-control", size=150, required='required') }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.submit(class_="btn btn-info btn-md") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

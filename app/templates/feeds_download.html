@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content_title %}Downloaded Items: {{ articles_list|length }} {% endblock %}
+
+{% block content %}
+
+<div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+        {% if articles_list|length > 0 %}
+            <table class="table table-striped">
+                  <tbody>
+                {% for item in articles_list %}
+                    <tr>
+                        <td><a href="{{ item }}" target="_blank">{{ item }}</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h3>New items : 0</h3>
+        {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

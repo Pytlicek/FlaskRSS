@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content_title %}Articles: {{ articles|length }}{{ super() }}{% endblock %}
+
+{% block content %}
+    <style>
+    .custom-badge-size {
+        font-size: 1em;
+    }
+    </style>
+    Filter by tag:
+    <a href="{{ url_for('feeds_articles') }}" class="badge badge-info custom-badge-size">All</a>
+
+    {% for item in feeds %}
+        <a href="{{ url_for('feeds_articles', feed_id=item.id) }}" class="badge badge-info custom-badge-size">{{ item.name }}</a>
+    {% endfor %}
+    <hr>
+<div>
+    {% for item in articles | sort(attribute='id', reverse = True) %}
+        <div class="card">
+          <div class="card-header">
+            <a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
+            <a href="{{ url_for('feeds_articles') }}" class="badge badge-info float-right">{{ item.feed_name }}</a>
+          </div>
+          <div class="card-body">
+            <p class="card-text align-text-top">{{ item.summary|replace('/>', '/><br>')|safe }}.</p>
+          </div>
+        </div>
+        <br>
+    {% endfor %}
+</div>
+{% endblock %}
