@@ -1,6 +1,8 @@
 ## FlaskRSS
-Simple RSS downloader and keeper
-![](/app/static/images/screenshot_1.png "Example 1")
+### Simple RSS downloader and keeper  
+
+![](/app/static/images/screenshot_1.png "Example 1")  
+
 ![](/app/static/images/screenshot_2.png "Example 2")
 
 ## Install required PIP packages within Virtualenv
