@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}"/>
     <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
-    <script src="{{ url_for('static', filename='jquery-3.5.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
 </head>
 <body>
@@ -21,7 +21,7 @@
     <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-            <a class="nav-link" href="{{url_for('logout')}}">Sign out {{ current_user.username }}</a>
+            <a class="nav-link" href="{{ url_for('logout') }}">Sign out {{ current_user.username }}</a>
         </li>
     </ul>
 </nav>
@@ -50,21 +50,6 @@
                         </a>
                     </li>
                 </ul>
-
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span>Tools</span>
-                    <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
-                        <span data-feather="plus-circle"></span>
-                    </a>
-                </h6>
-                <ul class="nav flex-column mb-2">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('feeds_download') }}">
-                            <span data-feather="file-text"></span>
-                            Download Feeds
-                        </a>
-                    </li>
-                </ul>
             </div>
         </nav>
 
@@ -73,8 +58,12 @@
                 <h1 class="h2">{% block content_title %}{% endblock %}</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group mr-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Add Feed</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary">Refresh Feed Data</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="window.location.href='{{ url_for('feeds_index') }}'">Add Feed
+                        </button>
+                        <button id="refresh_feeds" type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="update_feeds()">Refresh Feed Data <span data-feather="refresh-cw"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -84,11 +73,11 @@
                     {% for category, message in messages %}
                         <div id="flash_message" class="col-md-12 alert alert-{{ category }} ">{{ message }}</div>
                         <script type="application/javascript">
-                        setTimeout(function(){
-                          if ($('#flash_message').length > 0) {
-                            $('#flash_message').remove();
-                          }
-                        }, 3000)
+                            setTimeout(function () {
+                                if ($('#flash_message').length > 0) {
+                                    $('#flash_message').remove();
+                                }
+                            }, 3000)
                         </script>
                     {% endfor %}
                 {% endif %}
@@ -109,15 +98,32 @@
 </script>
 
 <script>
-$(document).ready(function() {
-    const pathname = window.location.pathname;
-    $('.nav-link').find('.active').removeClass('active');
-    $('li a').each(function() {
-        if ($(this).attr('href') == pathname) {
-            $(this).addClass('active');
-        }
+    $(document).ready(function () {
+        const pathname = window.location.pathname;
+        $('.nav-link').find('.active').removeClass('active');
+        $('li a').each(function () {
+            if ($(this).attr('href') == pathname) {
+                $(this).addClass('active');
+            }
+        });
     });
-});
+</script>
+
+<script>
+    function update_feeds() {
+        $.ajax({
+            url: '{{ url_for('feeds_download', feed_id="all") }}',
+            type: 'GET',
+            success: function (response) {
+                console.log(response);
+                $('#refresh_feeds').addClass("btn-info");
+                window.setTimeout(function () {
+                    $('#refresh_feeds').removeClass("btn-info");
+                    window.location.href = "{{ url_for('feeds_articles') }}";
+                }, 1000);
+            },
+        });
+    }
 </script>
 
 </body>

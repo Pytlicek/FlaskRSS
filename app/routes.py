@@ -67,7 +67,7 @@ def feeds_delete(feed_id):
 @app.route("/feeds/download/<feed_id>")
 @login_required
 def feeds_download(feed_id):
-    if feed_id is None:
+    if feed_id is None or feed_id == "all":
         feeds = Feed.get_all_feeds()
     else:
         feeds = Feed.get_feed_by_id(feed_id)
@@ -76,7 +76,10 @@ def feeds_download(feed_id):
     for feed in feeds:
         articles = download_articles(feed.url, feed.id)
         articles_list += articles
-    return render_template("feeds_download.html", articles_list=articles_list)
+    if feed_id != "all":
+        return render_template("feeds_download.html", articles_list=articles_list)
+    else:
+        return "True"
 
 
 @app.route("/feeds/articles", defaults={"feed_id": None}, methods=["GET"])
