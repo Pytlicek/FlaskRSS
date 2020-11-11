@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content_title %}Edit feed: {{ feed_data.name }} {{ super() }}{% endblock %}
+{% block content %}
+
+<div class="row">
+    <form method="POST" action="" class="col-md-12">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="name">{{ form.name.label }}</label>
+                {{ form.name(class_="form-control", size=50, required='required', value=feed_data.name) }}
+                <div class="invalid-feedback">Name is required.</div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="url">{{ form.url.label }}</label>
+                {{ form.url(class_="form-control", size=150, required='required', value=feed_data.url) }}
+                <div class="invalid-feedback">URL name is required.</div>
+            </div>
+        </div>
+        <div class="row col-md-3 mb-2">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Save changes</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

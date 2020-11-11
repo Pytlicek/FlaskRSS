@@ -2,30 +2,43 @@
 {% block content_title %}Articles: {{ articles|length }}{{ super() }}{% endblock %}
 
 {% block content %}
+
+{% if articles|length > 0 %}
     <style>
-    .custom-badge-size {
-        font-size: 1em;
-    }
+        .custom-badge-size {
+            font-size: 1em;
+        }
     </style>
     Filter by tag:
     <a href="{{ url_for('feeds_articles') }}" class="badge badge-info custom-badge-size">All</a>
 
     {% for item in feeds %}
-        <a href="{{ url_for('feeds_articles', feed_id=item.id) }}" class="badge badge-info custom-badge-size">{{ item.name }}</a>
+        <a href="{{ url_for('feeds_articles', feed_id=item.id) }}"
+           class="badge badge-info custom-badge-size">{{ item.name }}</a>
     {% endfor %}
     <hr>
-<div>
-    {% for item in articles | sort(attribute='id', reverse = True) %}
-        <div class="card">
-          <div class="card-header">
-            <a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
-            <a href="{{ url_for('feeds_articles') }}" class="badge badge-info float-right">{{ item.feed_name }}</a>
-          </div>
-          <div class="card-body">
-            <p class="card-text align-text-top">{{ item.summary|replace('/>', '/><br>')|safe }}.</p>
-          </div>
-        </div>
-        <br>
-    {% endfor %}
-</div>
+    <div>
+        {% for item in articles | sort(attribute='id', reverse = True) %}
+            <div class="card">
+                <div class="card-header">
+                    <a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
+                    <a href="{{ url_for('feeds_articles') }}"
+                       class="badge badge-info float-right">{{ item.feed_name }}</a>
+                </div>
+                <div class="card-body">
+                    <p class="card-text align-text-top">{{ item.summary|replace('/>', '/><br>')|safe }}.</p>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+{% elif search_query %}
+    <div>
+        <h4>Sorry, no matches found for : "{{ search_query }}"</h4>
+    </div>
+{% else %}
+    <div>
+        <h4>No articles found. <a href="{{ url_for('feeds_index') }}">Add a new feed or check the url of current feeds </a></h4>
+    </div>
+{% endif %}
 {% endblock %}

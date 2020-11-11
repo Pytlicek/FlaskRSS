@@ -10,6 +10,10 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(128))
 
     def verify_password(self, password):
+        """
+        Verify password during login
+        Returns True or False
+        """
         return check_password_hash(self.password, password)
 
 
@@ -27,6 +31,11 @@ class Feed(db.Model):
 
     @staticmethod
     def add_feed(name, url):
+        """
+        Add feed to DB.
+        Field feed.id is automatically added by DB engine
+        Field feed.user_id is automatically added from current_user.id
+        """
         new_feed = Feed()
         new_feed.name = name
         new_feed.url = url
@@ -40,7 +49,28 @@ class Feed(db.Model):
             return False
 
     @staticmethod
+    def edit_feed(feed_id, feed_name, feed_url):
+        """
+        Edit selected feed based on feed_id
+        Change only feed.name and feed.url
+        """
+        feed = Feed.query.filter_by(
+            user_id=current_user.id, id=feed_id
+        ).first()
+        feed.name = feed_name
+        feed.url = feed_url
+        try:
+            db.session.commit()
+            return True
+        except:
+            db.session.rollback()
+            return False
+
+    @staticmethod
     def delete_feed(feed_id):
+        """
+        Delete selected feed with all related articles
+        """
         feeds = Feed.get_feed_by_id(feed_id)
         if feeds is None or feeds == []:
             return False
@@ -51,10 +81,16 @@ class Feed(db.Model):
 
     @staticmethod
     def get_all_feeds():
+        """
+        Returns all feeds as array
+        """
         return Feed.query.filter_by(user_id=current_user.id).all()
 
     @staticmethod
     def get_feed_by_id(feed_id):
+        """
+        Returns selected feed as array
+        """
         return Feed.query.filter_by(user_id=current_user.id, id=feed_id).all()
 
 
@@ -78,25 +114,40 @@ class Article(db.Model):
 
     @property
     def feed_name(self):
+        """
+        Add feed name as property for Article object
+        """
         feed = Feed.query.filter_by(id=self.feed_id).first()
         return feed.name
 
     @staticmethod
     def get_all_articles():
+        """
+        Returns all articles in all feeds as array
+        """
         return Article.query.filter_by(user_id=current_user.id).all()
 
     @staticmethod
     def get_articles_by_feed_id(feed_id):
+        """
+        Returns all articles in selected feed as array
+        """
         return Article.query.filter_by(feed_id=feed_id).all()
 
     @staticmethod
     def get_article_by_url(url):
+        """
+        Returns selected article
+        """
         return Article.query.filter_by(
             user_id=current_user.id, url=url
         ).first()
 
     @staticmethod
     def delete_articles_by_feed_id(feed_id):
+        """
+        Delete all articles in selected feed
+        """
         Article.query.filter_by(
             user_id=current_user.id, feed_id=feed_id
         ).delete()
@@ -105,6 +156,14 @@ class Article(db.Model):
 
 
 def download_articles(feed_url, feed_id):
+    """
+    Download articles for selected feed
+    Takes feed url and tries to parse RSS feed
+    Ensure valid RSS feed by searching for title
+    Articles in the parsed feed are mapped to Article object and saved to DB
+    Articles that are in DB (based on URL) are skipped and not added
+    Returns list of newly added articles
+    """
     import feedparser
 
     NewsFeed = feedparser.parse(feed_url)

@@ -18,8 +18,9 @@
                         <th scope="row">{{ loop.index }}</th>
                         <td>{{ item.name }}</td>
                         <td><a href="{{ item.url }}" target="_blank">{{ item.url }}</a></td>
-                        <td style="text-align:right"><a href="{{ url_for('feeds_delete', feed_id=item.id) }}"> <span
-                                data-feather="trash"></span></a>
+                        <td style="text-align:right">
+                            <a href="{{ url_for('feeds_edit', feed_id=item.id) }}"> <span data-feather="edit"></span></a>
+                            <a href="{{ url_for('feeds_delete', feed_id=item.id) }}"> <span data-feather="trash"></span></a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -34,7 +35,6 @@
         <form method="POST" action="" class="col-md-12">
             <h3>Add New feed:</h3>
             {{ form.hidden_tag() }}
-
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label for="name">{{ form.name.label }}</label>
@@ -50,8 +50,7 @@
             <div class="row col-md-3 mb-2">
                 {{ form.submit(class_="btn btn-primary btn-lg btn-block") }}
             </div>
-
         </form>
     </div>
-    </div>
+
 {% endblock %}

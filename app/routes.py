@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, request
 from flask_login import (
     LoginManager,
     login_required,
@@ -6,9 +6,8 @@ from flask_login import (
     logout_user,
 )
 from app import app
-from app.forms import LoginForm
 from app.models import User, Feed, Article, download_articles
-from app.forms import AddFeedForm
+from app.forms import LoginForm, AddFeedForm, SearchForm
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -41,7 +40,7 @@ def logout():
 @app.route("/")
 @login_required
 def index():
-    return render_template("dashboard_index.html")
+    return redirect(url_for("feeds_articles"))
 
 
 @app.route("/feeds", methods=["GET", "POST"])
@@ -53,6 +52,25 @@ def feeds_index():
         flash("Feed has been added", "success")
     feeds = Feed.get_all_feeds()
     return render_template("feeds_index.html", feeds=feeds, form=form)
+
+
+@app.route("/feeds/edit/<feed_id>", methods=["GET", "POST"])
+@login_required
+def feeds_edit(feed_id):
+    form = AddFeedForm()
+    if form.validate_on_submit():
+        Feed.edit_feed(feed_id, form.data["name"], form.data["url"])
+        flash("Feed has been changed", "success")
+        return redirect(url_for("feeds_index"))
+
+    feed_data = Feed.get_feed_by_id(feed_id)
+    if not feed_data:
+        return redirect(url_for("feeds_index"))
+    else:
+        feed_data = feed_data[0]
+        return render_template(
+            "feeds_edit.html", form=form, feed_data=feed_data
+        )
 
 
 @app.route("/feeds/<feed_id>/delete", methods=["GET"])
@@ -77,7 +95,9 @@ def feeds_download(feed_id):
         articles = download_articles(feed.url, feed.id)
         articles_list += articles
     if feed_id != "all":
-        return render_template("feeds_download.html", articles_list=articles_list)
+        return render_template(
+            "feeds_download.html", articles_list=articles_list
+        )
     else:
         return "True"
 
@@ -95,3 +115,19 @@ def feeds_articles(feed_id):
     return render_template(
         "articles_index.html", articles=articles, feeds=feeds
     )
+
+
+@app.route("/search", methods=["GET", "POST"])
+@login_required
+def search():
+    if request.method == "POST":
+        form = SearchForm()
+        search_query = form.data["article_text"]
+        articles = Article.query.filter(
+            Article.summary.ilike(f"%{search_query}%")
+        ).all()
+    else:
+        search_query = False
+        articles = Article.get_all_articles()
+
+    return render_template("articles_index.html", articles=articles, search_query=search_query)
