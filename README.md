@@ -1,3 +1,4 @@
+![FlaskRSS-Tests](https://github.com/Pytlicek/FlaskRSS/workflows/FlaskRSS-Tests/badge.svg)
 ## FlaskRSS
 ### Simple RSS downloader and keeper  
 
