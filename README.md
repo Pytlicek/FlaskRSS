@@ -1,4 +1,4 @@
-![FlaskRSS-Tests](https://github.com/Pytlicek/FlaskRSS/workflows/FlaskRSS-Tests/badge.svg)
+![FlaskRSS-Tests](https://github.com/Pytlicek/FlaskRSS/workflows/FlaskRSS-Tests/badge.svg)  [![codecov](https://codecov.io/gh/Pytlicek/FlaskRSS/branch/main/graph/badge.svg)](https://codecov.io/gh/Pytlicek/FlaskRSS)
 ## FlaskRSS
 ### Simple RSS downloader and keeper  
 
