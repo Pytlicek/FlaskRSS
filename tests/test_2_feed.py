@@ -1,3 +1,7 @@
+from app.models import Feed
+import pytest
+
+
 def test_feed_get_1(client):
     response = client.get("/feeds")
     assert response.status_code == 200
@@ -5,7 +9,7 @@ def test_feed_get_1(client):
     assert "Add New feed" in str(response.data)
 
 
-def test_feed_post(client):
+def test_feed_add_1(client):
     response = client.post(
         "/feeds",
         data={"name": "feed1", "url": "https://www.bazos.sk/rss.php"},
@@ -16,7 +20,7 @@ def test_feed_post(client):
     assert "https://www.bazos.sk/rss.php" in str(response.data)
 
 
-def test_feed_post_2(client):
+def test_feed_add_2(client):
     response = client.post(
         "/feeds",
         data={
@@ -78,3 +82,9 @@ def test_feed_edit_2(client):
     assert "feed_1" in str(response.data)
     assert "feed1" not in str(response.data)
     assert "https://www.bazos.sk/rss.php" in str(response.data)
+
+
+def test_feed_edit_3():
+    with pytest.raises(Exception) as error_info:
+        Feed.edit_feed(5, "abc", "http://localhost")
+        assert error_info
