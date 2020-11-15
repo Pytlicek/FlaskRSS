@@ -130,4 +130,6 @@ def search():
         search_query = False
         articles = Article.get_all_articles()
 
-    return render_template("articles_index.html", articles=articles, search_query=search_query)
+    return render_template(
+        "articles_index.html", articles=articles, search_query=search_query
+    )
