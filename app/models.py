@@ -167,10 +167,9 @@ def download_articles(feed_url, feed_id):
     import feedparser
 
     NewsFeed = feedparser.parse(feed_url)
-    if "title" in NewsFeed.feed is False:
-        return [
-            "There was an error parsing the feed. Please ensure that the feed is valid RSS"
-        ]
+    feed_problem = "title" not in NewsFeed.feed
+    if feed_problem:
+        return "Rate limit or invalid RSS: " + str(feed_url) + str("\n")
 
     articles_added = []
     for entry in NewsFeed.entries:
@@ -185,11 +184,7 @@ def download_articles(feed_url, feed_id):
             try:
                 db.session.add(article)
                 db.session.commit()
-                # print("Article Added", article.id)
                 articles_added.append(article.url)
             except:
                 db.session.rollback()
-        else:
-            # print("Article exists", entry.link)
-            pass
     return articles_added

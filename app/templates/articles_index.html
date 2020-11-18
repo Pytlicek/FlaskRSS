@@ -41,4 +41,15 @@
         <h4>No articles found. <a href="{{ url_for('feeds_index') }}">Add a new feed or check the url of current feeds </a></h4>
     </div>
 {% endif %}
+    <script type="application/javascript">
+    window.onload = function(){
+        $.ajax({
+            url: '{{ url_for('feeds_download', feed_id="all") }}',
+            type: 'GET',
+            success: function (response) {
+                console.log(response);
+            },
+        });
+    }
+    </script>
 {% endblock %}

@@ -99,7 +99,7 @@ def feeds_download(feed_id):
             "feeds_download.html", articles_list=articles_list
         )
     else:
-        return "True"
+        return ''.join(articles_list)
 
 
 @app.route("/feeds/articles", defaults={"feed_id": None}, methods=["GET"])
