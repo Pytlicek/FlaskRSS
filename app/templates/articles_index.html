@@ -48,6 +48,9 @@
             type: 'GET',
             success: function (response) {
                 console.log(response);
+                window.setTimeout(function () {
+                    window.location.href = "{{ url_for('feeds_articles') }}";
+                }, 120000);
             },
         });
     }

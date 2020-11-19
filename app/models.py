@@ -187,4 +187,4 @@ def download_articles(feed_url, feed_id):
                 articles_added.append(article.url)
             except:
                 db.session.rollback()
-    return articles_added
+    return "Refresh: Done\n" if len(articles_added) < 1 else articles_added
