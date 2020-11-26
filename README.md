@@ -1,4 +1,5 @@
-![FlaskRSS-Tests](https://github.com/Pytlicek/FlaskRSS/workflows/FlaskRSS-Tests/badge.svg)  [![codecov](https://codecov.io/gh/Pytlicek/FlaskRSS/branch/main/graph/badge.svg)](https://codecov.io/gh/Pytlicek/FlaskRSS)
+![FlaskRSS-Tests](https://github.com/Pytlicek/FlaskRSS/workflows/FlaskRSS-Tests/badge.svg)  [![codecov](https://codecov.io/gh/Pytlicek/FlaskRSS/branch/main/graph/badge.svg)](https://codecov.io/gh/Pytlicek/FlaskRSS) [![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
+
 ## FlaskRSS
 ### Simple RSS downloader and keeper  
 
