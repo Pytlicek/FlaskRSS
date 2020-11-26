@@ -66,11 +66,10 @@ def feeds_edit(feed_id):
     feed_data = Feed.get_feed_by_id(feed_id)
     if not feed_data:
         return redirect(url_for("feeds_index"))
-    else:
-        feed_data = feed_data[0]
-        return render_template(
-            "feeds_edit.html", form=form, feed_data=feed_data
-        )
+    feed_data = feed_data[0]
+    return render_template(
+        "feeds_edit.html", form=form, feed_data=feed_data
+    )
 
 
 @app.route("/feeds/<feed_id>/delete", methods=["GET"])
