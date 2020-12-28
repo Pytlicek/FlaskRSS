@@ -99,7 +99,7 @@ def feeds_download(feed_id):
     if feed_id != "all":
         return dict(articles_list=articles_list)
     else:
-        return ''.join(articles_list)
+        return "".join(articles_list)
 
 
 @app.route("/feeds/articles", defaults={"feed_id": None}, methods=["GET"])
