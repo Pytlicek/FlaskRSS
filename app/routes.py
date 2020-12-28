@@ -8,6 +8,7 @@ from flask_login import (
 from app import app
 from app.models import User, Feed, Article, download_articles
 from app.forms import LoginForm, AddFeedForm, SearchForm
+from app.helpers import templated
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -20,13 +21,14 @@ def load_user(user_id):
 
 
 @app.route("/login", methods=["GET", "POST"])
+@templated()
 def login():
     form = LoginForm()
     user = User.query.filter_by(username=form.username.data).first()
     if user is not None and user.verify_password(form.password.data):
         login_user(user)
         return redirect(url_for("index"))
-    return render_template("login.html", form=form)
+    return dict(form=LoginForm())
 
 
 @app.route("/logout")
@@ -45,17 +47,18 @@ def index():
 
 @app.route("/feeds", methods=["GET", "POST"])
 @login_required
+@templated()
 def feeds_index():
     form = AddFeedForm()
-    if form.validate_on_submit():
+    if AddFeedForm().validate_on_submit():
         Feed.add_feed(form.data["name"], form.data["url"])
         flash("Feed has been added", "success")
-    feeds = Feed.get_all_feeds()
-    return render_template("feeds_index.html", feeds=feeds, form=form)
+    return dict(feeds=Feed.get_all_feeds(), form=form)
 
 
 @app.route("/feeds/edit/<feed_id>", methods=["GET", "POST"])
 @login_required
+@templated()
 def feeds_edit(feed_id):
     form = AddFeedForm()
     if form.validate_on_submit():
@@ -66,11 +69,8 @@ def feeds_edit(feed_id):
     feed_data = Feed.get_feed_by_id(feed_id)
     if not feed_data:
         return redirect(url_for("feeds_index"))
-    else:
-        feed_data = feed_data[0]
-        return render_template(
-            "feeds_edit.html", form=form, feed_data=feed_data
-        )
+    feed_data = feed_data[0]
+    return dict(form=form, feed_data=feed_data)
 
 
 @app.route("/feeds/<feed_id>/delete", methods=["GET"])
@@ -84,9 +84,11 @@ def feeds_delete(feed_id):
 @app.route("/feeds/download/", defaults={"feed_id": None}, methods=["GET"])
 @app.route("/feeds/download/<feed_id>")
 @login_required
+@templated()
 def feeds_download(feed_id):
     if feed_id is None or feed_id == "all":
         feeds = Feed.get_all_feeds()
+        print(feeds)
     else:
         feeds = Feed.get_feed_by_id(feed_id)
 
@@ -95,9 +97,7 @@ def feeds_download(feed_id):
         articles = download_articles(feed.url, feed.id)
         articles_list += articles
     if feed_id != "all":
-        return render_template(
-            "feeds_download.html", articles_list=articles_list
-        )
+        return dict(articles_list=articles_list)
     else:
         return ''.join(articles_list)
 
@@ -105,20 +105,18 @@ def feeds_download(feed_id):
 @app.route("/feeds/articles", defaults={"feed_id": None}, methods=["GET"])
 @app.route("/feeds/<feed_id>/articles/")
 @login_required
+@templated("articles_index.html")
 def feeds_articles(feed_id):
     if feed_id is None:
         articles = Article.get_all_articles()
     else:
         articles = Article.get_articles_by_feed_id(feed_id)
-
-    feeds = Feed.get_all_feeds()
-    return render_template(
-        "articles_index.html", articles=articles, feeds=feeds
-    )
+    return dict(articles=articles, feeds=Feed.get_all_feeds())
 
 
 @app.route("/search", methods=["GET", "POST"])
 @login_required
+@templated("articles_index.html")
 def search():
     if request.method == "POST":
         form = SearchForm()
@@ -130,6 +128,4 @@ def search():
         search_query = False
         articles = Article.get_all_articles()
 
-    return render_template(
-        "articles_index.html", articles=articles, search_query=search_query
-    )
+    return dict(articles=articles, search_query=search_query)

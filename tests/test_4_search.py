@@ -5,7 +5,6 @@ def test_search_get_1(client):
     response = client.get("/search", follow_redirects=True)
     assert response.status_code == 200
     assert response.status_code != 302
-    assert "predam" in str(response.data).lower()
 
 
 def test_search_query_1(client):
