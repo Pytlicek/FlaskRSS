@@ -1,6 +1,7 @@
 from flask_login import UserMixin, current_user
 from flask_bcrypt import check_password_hash
 from datetime import datetime
+from sqlalchemy import desc
 from app import db
 
 
@@ -126,6 +127,13 @@ class Article(db.Model):
         Returns all articles in all feeds as array
         """
         return Article.query.filter_by(user_id=current_user.id).all()
+    
+    @staticmethod
+    def get_last_articles():
+        """
+        Returns last 200 articles in all feeds as array
+        """
+        return Article.query.filter_by(user_id=current_user.id).order_by(desc(Article.id)).limit(200).all()
 
     @staticmethod
     def get_articles_by_feed_id(feed_id):
