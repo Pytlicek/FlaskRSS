@@ -108,7 +108,7 @@ def feeds_download(feed_id):
 @templated("articles_index.html")
 def feeds_articles(feed_id):
     if feed_id is None:
-        articles = Article.get_all_articles()
+        articles = Article.get_last_articles()
     else:
         articles = Article.get_articles_by_feed_id(feed_id)
     return dict(articles=articles, feeds=Feed.get_all_feeds())
