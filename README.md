@@ -1,6 +1,6 @@
 ![Tests](https://github.com/Pytlicek/FlaskRSS/workflows/Tests/badge.svg)  [![codecov](https://codecov.io/gh/Pytlicek/FlaskRSS/branch/main/graph/badge.svg)](https://codecov.io/gh/Pytlicek/FlaskRSS) [![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai) [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 ## FlaskRSS
-### Simple RSS downloader and keeper  
+### Simple RSS downloader and keeper   
 
 ![](/app/static/images/screenshot_1.png "Example 1")  
 
