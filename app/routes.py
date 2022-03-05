@@ -1,14 +1,15 @@
-from flask import render_template, url_for, redirect, flash, request
+from flask import url_for, redirect, flash, request
 from flask_login import (
     LoginManager,
     login_required,
     login_user,
     logout_user,
 )
+
 from app import app
-from app.models import User, Feed, Article, download_articles
 from app.forms import LoginForm, AddFeedForm, SearchForm
 from app.helpers import templated
+from app.models import User, Feed, Article, download_articles
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -100,6 +101,17 @@ def feeds_download(feed_id):
         return dict(articles_list=articles_list)
     else:
         return "".join(articles_list)
+
+
+@app.route("/feeds/refresh", methods=["GET"])
+def feeds_refresh():
+    feeds = Feed.get_all_feeds()
+    articles_list = []
+    for feed in feeds:
+        articles = download_articles(feed.url, feed.id)
+        articles_list += articles
+
+    return "".join(articles_list)
 
 
 @app.route("/feeds/articles", defaults={"feed_id": None}, methods=["GET"])
