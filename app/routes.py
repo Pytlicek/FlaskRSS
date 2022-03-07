@@ -110,7 +110,7 @@ def feeds_refresh():
     for feed in feeds:
         print("Refreshing feed:", feed.id, feed.url)
         articles = download_articles(feed.url, feed.id)
-        time.sleep(10)
+        time.sleep(30)
         articles_list += articles
 
     return "".join(articles_list)
