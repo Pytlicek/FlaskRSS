@@ -108,6 +108,7 @@ def feeds_refresh():
     feeds = Feed.get_all_feeds()
     articles_list = []
     for feed in feeds:
+        print("Refreshing feed:", feed.id, feed.url)
         articles = download_articles(feed.url, feed.id)
         time.sleep(10)
         articles_list += articles
