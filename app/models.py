@@ -121,9 +121,9 @@ class Article(db.Model):
     @staticmethod
     def get_last_articles():
         """
-        Returns last 200 articles in all feeds as array
+        Returns last 300 articles in all feeds as array
         """
-        return Article.query.order_by(desc(Article.id)).limit(200).all()
+        return Article.query.order_by(desc(Article.id)).limit(300).all()
 
     @staticmethod
     def get_articles_by_feed_id(feed_id):
