@@ -17,14 +17,16 @@
 </head>
 <body>
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/">Bazos.sk search</a>
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/">Bazos.sk
+        search</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed"
             type="button" data-toggle="collapse"
             data-target="#sidebarMenu" aria-controls="sidebarMenu"
             aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <form class="form-control-range" action="{{ url_for('items_search') }}" method="post">
+    <form class="form-control-range" action="{{ url_for('items_search') }}"
+          method="post">
         <input class="form-control form-control-dark w-100" type="text"
                placeholder="Search" aria-label="Search" name="article_text">
     </form>
@@ -36,7 +38,8 @@
              class="col-md-2 col-lg-1 d-md-block bg-light sidebar collapse">
             <div class="sidebar-sticky pt-3">
                 <ul class="nav flex-column">
-                    <a href="{{ url_for('items_index') }}" class="nav-link">All</a>
+                    <a href="{{ url_for('items_index') }}"
+                       class="nav-link">All</a>
                     {% for item in feeds | sort(attribute='name') %}
                         <li class="nav-item">
                             <a href="{{ url_for('items_index', feed_id=item.id) }}"
@@ -50,7 +53,9 @@
 
         <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">{% block content_title %}Search: {{ search_query }}{{ feed_name }} ({{ articles|length }}){% endblock %}</h1>
+                <h1 class="h2">{% block content_title %}Search:
+                    {{ search_query }}{{ feed_name }} ({{ articles|length }}
+                    ){% endblock %}</h1>
             </div>
 
             {% if articles|length > 0 %}
@@ -76,7 +81,10 @@
                 </div>
             {% else %}
                 <div>
-                    <h4>No items found.</h4>
+                    <h4>No items found. Try other nearby places.</h4><br>
+                    {% for item in feeds | sort(attribute='name') %}
+                        <a href="{{ url_for('items_index', feed_id=item.id) }}">{{ item.name }}</a><br>
+                    {% endfor %}
                 </div>
             {% endif %}
 
