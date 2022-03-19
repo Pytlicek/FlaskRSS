@@ -160,11 +160,9 @@ class Article(db.Model):
         """
         Cleanup DB
         """
-        feeds = Feed.get_all_feeds()
-        for feed in feeds:
-            print(feed.id, feed.name)
+        for feed in Feed.get_all_feeds():
             all_articles = Article.get_all_articles_by_feed_id(feed.id)
-            print("all_articles:", len(all_articles))
+            print(f"{feed.id} / {feed.name} / articles:", len(all_articles))
 
             del_articles = Article.query.filter_by(feed_id=feed.id).order_by(
                 desc(Article.id)).offset(300)

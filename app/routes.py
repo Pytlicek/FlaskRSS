@@ -175,7 +175,6 @@ def items_search():
 
 
 @app.route("/cleanup", methods=["GET"])
-@login_required
 def cleanup():
     Article.cleanup()
     return "Cleanup Done"
