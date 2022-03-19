@@ -130,7 +130,14 @@ class Article(db.Model):
         """
         Returns all articles in selected feed as array
         """
-        return Article.query.filter_by(feed_id=feed_id).limit(300).all()
+        return Article.query.filter_by(feed_id=feed_id).order_by(desc(Article.id)).limit(300).all()
+
+    @staticmethod
+    def get_all_articles_by_feed_id(feed_id):
+        """
+        Returns all articles in selected feed as array
+        """
+        return Article.query.filter_by(feed_id=feed_id).all()
 
     @staticmethod
     def get_article_by_url(url):
@@ -146,6 +153,24 @@ class Article(db.Model):
         """
         Article.query.filter_by(feed_id=feed_id).delete()
         db.session.commit()
+        return True
+
+    @staticmethod
+    def cleanup():
+        """
+        Cleanup DB
+        """
+        feeds = Feed.get_all_feeds()
+        for feed in feeds:
+            print(feed.id, feed.name)
+            all_articles = Article.get_all_articles_by_feed_id(feed.id)
+            print("all_articles:", len(all_articles))
+
+            del_articles = Article.query.filter_by(feed_id=feed.id).order_by(
+                desc(Article.id)).offset(300)
+            for article in del_articles:
+                Article.query.filter_by(id=article.id).delete()
+            db.session.commit()
         return True
 
 

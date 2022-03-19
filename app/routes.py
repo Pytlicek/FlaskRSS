@@ -172,3 +172,10 @@ def items_search():
         articles = Article.get_all_articles()
 
     return dict(articles=articles, search_query=search_query, feeds=Feed.get_all_feeds())
+
+
+@app.route("/cleanup", methods=["GET"])
+@login_required
+def cleanup():
+    Article.cleanup()
+    return "Cleanup Done"
