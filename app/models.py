@@ -130,7 +130,7 @@ class Article(db.Model):
         """
         Returns all articles in selected feed as array
         """
-        return Article.query.filter_by(feed_id=feed_id).all()
+        return Article.query.filter_by(feed_id=feed_id).limit(300).all()
 
     @staticmethod
     def get_article_by_url(url):
