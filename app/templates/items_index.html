@@ -81,7 +81,7 @@
                 </div>
             {% else %}
                 <div>
-                    <h4>No items found. Try other nearby places.</h4><br>
+                    <h4>No items found. Try other searches.</h4><br>
                     {% for item in feeds | sort(attribute='name') %}
                         <a href="{{ url_for('items_index', feed_id=item.id) }}">{{ item.name }}</a><br>
                     {% endfor %}
