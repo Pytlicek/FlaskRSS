@@ -53,7 +53,7 @@ def feeds_index():
     if AddFeedForm().validate_on_submit():
         Feed.add_feed(form.data["name"], form.data["url"])
         flash("Feed has been added", "success")
-    return dict(feeds=Feed.get_all_feeds(), form=form)
+    return dict(feeds=Feed.get_all_feeds_by_date(), form=form)
 
 
 @app.route("/feeds/edit/<feed_id>", methods=["GET", "POST"])
