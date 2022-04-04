@@ -24,6 +24,7 @@ class Feed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     url = db.Column(db.Text)
+    updated = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
         return repr([self.id, self.name, self.url])
@@ -37,6 +38,7 @@ class Feed(db.Model):
         new_feed = Feed()
         new_feed.name = name
         new_feed.url = url
+        new_feed.updated = datetime.utcnow()
         try:
             db.session.add(new_feed)
             db.session.commit()
@@ -54,6 +56,7 @@ class Feed(db.Model):
         feed = Feed.query.filter_by(id=feed_id).first()
         feed.name = feed_name
         feed.url = feed_url
+        feed.updated = datetime.utcnow()
         try:
             db.session.commit()
             return True
@@ -80,6 +83,13 @@ class Feed(db.Model):
         Returns all feeds as array
         """
         return Feed.query.all()
+
+    @staticmethod
+    def get_all_feeds_by_date():
+        """
+        Returns all feeds as array
+        """
+        return Feed.query.order_by(desc(Feed.updated)).all()
 
     @staticmethod
     def get_feed_by_id(feed_id):

@@ -87,7 +87,7 @@ def feeds_delete(feed_id):
 @templated()
 def feeds_download(feed_id):
     if feed_id is None or feed_id == "all":
-        feeds = Feed.get_all_feeds()
+        feeds = Feed.get_all_feeds_by_date()
         print(feeds)
     else:
         feeds = Feed.get_feed_by_id(feed_id)
@@ -105,7 +105,7 @@ def feeds_download(feed_id):
 @app.route("/feeds/refresh", methods=["GET"])
 def feeds_refresh():
     import time
-    feeds = Feed.get_all_feeds()
+    feeds = Feed.get_all_feeds_by_date()
     articles_list = []
     for feed in feeds:
         print("Refreshing feed:", feed.id, feed.url)
