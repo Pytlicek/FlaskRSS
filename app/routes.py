@@ -51,7 +51,7 @@ def logout():
 def feeds_index():
     form = AddFeedForm()
     if AddFeedForm().validate_on_submit():
-        Feed.add_feed(form.data["name"], form.data["url"])
+        Feed.add_feed(form.data["name"], form.data["url"], True)
         flash("Feed has been added", "success")
     return dict(feeds=Feed.get_all_feeds_by_date(), form=form)
 
@@ -62,7 +62,7 @@ def feeds_index():
 def feeds_edit(feed_id):
     form = AddFeedForm()
     if form.validate_on_submit():
-        Feed.edit_feed(feed_id, form.data["name"], form.data["url"])
+        Feed.edit_feed(feed_id, form.data["name"], form.data["url"], form.data["show_in_feed"])
         flash("Feed has been changed", "success")
         return redirect(url_for("feeds_index"))
 
