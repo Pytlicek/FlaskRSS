@@ -26,6 +26,5 @@ def test_login_path(client):
         data={"username": "admin", "password": "admin"},
         follow_redirects=True,
     )
-    assert "Articles:" in str(response.data)
     assert "No items found" in str(response.data)
     assert "Search:" in str(response.data)
