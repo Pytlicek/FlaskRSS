@@ -62,7 +62,12 @@ def feeds_index():
 def feeds_edit(feed_id):
     form = AddFeedForm()
     if form.validate_on_submit():
-        Feed.edit_feed(feed_id, form.data["name"], form.data["url"], form.data["show_in_feed"])
+        Feed.edit_feed(
+            feed_id,
+            form.data["name"],
+            form.data["url"],
+            form.data["show_in_feed"],
+        )
         flash("Feed has been changed", "success")
         return redirect(url_for("feeds_index"))
 
@@ -105,6 +110,7 @@ def feeds_download(feed_id):
 @app.route("/feeds/refresh", methods=["GET"])
 def feeds_refresh():
     import time
+
     feeds = Feed.get_all_feeds_by_date()
     articles_list = []
     for feed in feeds:
@@ -155,7 +161,9 @@ def items_index(feed_id):
     else:
         feed_name = Feed.get_feed_by_id(feed_id)[0].name
         articles = Article.get_articles_by_feed_id(feed_id)
-    return dict(articles=articles, feeds=Feed.get_all_feeds(), feed_name=feed_name)
+    return dict(
+        articles=articles, feeds=Feed.get_all_feeds(), feed_name=feed_name
+    )
 
 
 @app.route("/items-search", methods=["GET", "POST"])
@@ -171,7 +179,11 @@ def items_search():
         search_query = False
         articles = Article.get_all_articles()
 
-    return dict(articles=articles, search_query=search_query, feeds=Feed.get_all_feeds())
+    return dict(
+        articles=articles,
+        search_query=search_query,
+        feeds=Feed.get_all_feeds(),
+    )
 
 
 @app.route("/cleanup", methods=["GET"])

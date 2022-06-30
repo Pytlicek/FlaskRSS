@@ -41,7 +41,7 @@ class Feed(db.Model):
         new_feed.url = url
         new_feed.show_in_feed = show_in_feed
         new_feed.updated = datetime.utcnow()
-        
+
         try:
             db.session.add(new_feed)
             db.session.commit()
@@ -61,7 +61,7 @@ class Feed(db.Model):
         feed.url = feed_url
         feed.show_in_feed = show_in_feed
         feed.updated = datetime.utcnow()
-        
+
         try:
             db.session.commit()
             return True
@@ -114,6 +114,7 @@ class Article(db.Model):
         db.Integer,
         db.ForeignKey("feed.id", onupdate="CASCADE", ondelete="CASCADE"),
     )
+    show_in_feed = db.relationship("Feed", backref="article", lazy=True)
 
     def __repr__(self):
         return repr([self.id, self.url, self.title])
@@ -138,14 +139,24 @@ class Article(db.Model):
         """
         Returns last 300 articles in all feeds as array
         """
-        return Article.query.order_by(desc(Article.id)).limit(300).all()
+        return (
+            Article.query.filter(Article.show_in_feed.has(show_in_feed=True))
+            .order_by(desc(Article.id))
+            .limit(300)
+            .all()
+        )
 
     @staticmethod
     def get_articles_by_feed_id(feed_id):
         """
         Returns all articles in selected feed as array
         """
-        return Article.query.filter_by(feed_id=feed_id).order_by(desc(Article.id)).limit(300).all()
+        return (
+            Article.query.filter_by(feed_id=feed_id)
+            .order_by(desc(Article.id))
+            .limit(300)
+            .all()
+        )
 
     @staticmethod
     def get_all_articles_by_feed_id(feed_id):
@@ -179,8 +190,11 @@ class Article(db.Model):
             all_articles = Article.get_all_articles_by_feed_id(feed.id)
             print(f"{feed.id} / {feed.name} / articles:", len(all_articles))
 
-            del_articles = Article.query.filter_by(feed_id=feed.id).order_by(
-                desc(Article.id)).offset(300)
+            del_articles = (
+                Article.query.filter_by(feed_id=feed.id)
+                .order_by(desc(Article.id))
+                .offset(300)
+            )
             for article in del_articles:
                 Article.query.filter_by(id=article.id).delete()
             db.session.commit()

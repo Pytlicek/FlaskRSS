@@ -7,6 +7,7 @@
                 <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Feed</th>
                     <th scope="col">Name</th>
                     <th scope="col">URL</th>
                     <th scope="col" style="text-align:right">Action</th>
@@ -16,12 +17,12 @@
                 {% for item in feeds %}
                     <tr>
                         <th scope="row">{{ loop.index }}</th>
+                        <th scope="row">{% if item.show_in_feed %}<span data-feather="check-square"></span>{% else %}<span data-feather="slash"></span>{% endif %}</th>
                         <td>{{ item.name }}</td>
                         <td><a href="{{ item.url }}" target="_blank">{{ item.url }}</a></td>
                         <td style="text-align:right">
                             <a href="{{ url_for('feeds_edit', feed_id=item.id) }}"> <span data-feather="edit"></span></a>
                             <a href="{{ url_for('feeds_delete', feed_id=item.id) }}"> <span data-feather="trash"></span></a>
-                            {% if item.show_in_feed %}<span data-feather="check-square"></span>{% else %}<span data-feather="slash"></span>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}
