@@ -201,7 +201,7 @@ def download_articles(feed_url, feed_id):
     NewsFeed = feedparser.parse(feed_data.text)
     feed_problem = "title" not in NewsFeed.feed
     if feed_problem:
-        return "Rate limit or invalid RSS: " + str(feed_url) + str("\n")
+        return f"Rate limit or invalid RSS: {str(feed_url)}" + "\n"
 
     articles_added = []
     for entry in NewsFeed.entries:
@@ -218,8 +218,4 @@ def download_articles(feed_url, feed_id):
                 articles_added.append(article.url)
             except:
                 db.session.rollback()
-    return (
-        ["Articles downloaded for: {}\n".format(feed_url)]
-        if len(articles_added) < 1
-        else articles_added
-    )
+    return articles_added or [f"Articles downloaded for: {feed_url}\n"]
