@@ -25,6 +25,7 @@ class Feed(db.Model):
     name = db.Column(db.Text)
     url = db.Column(db.Text)
     show_in_feed = db.Column(db.BOOLEAN)
+    updated = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
         return repr([self.id, self.name, self.url, self.show_in_feed])
@@ -39,6 +40,8 @@ class Feed(db.Model):
         new_feed.name = name
         new_feed.url = url
         new_feed.show_in_feed = show_in_feed
+        new_feed.updated = datetime.utcnow()
+        
         try:
             db.session.add(new_feed)
             db.session.commit()
@@ -57,6 +60,8 @@ class Feed(db.Model):
         feed.name = feed_name
         feed.url = feed_url
         feed.show_in_feed = show_in_feed
+        feed.updated = datetime.utcnow()
+        
         try:
             db.session.commit()
             return True
@@ -83,6 +88,13 @@ class Feed(db.Model):
         Returns all feeds as array
         """
         return Feed.query.all()
+
+    @staticmethod
+    def get_all_feeds_by_date():
+        """
+        Returns all feeds as array
+        """
+        return Feed.query.order_by(desc(Feed.updated)).all()
 
     @staticmethod
     def get_feed_by_id(feed_id):
@@ -124,12 +136,19 @@ class Article(db.Model):
     @staticmethod
     def get_last_articles():
         """
-        Returns last 200 articles in all feeds as array
+        Returns last 300 articles in all feeds as array
         """
-        return Article.query.order_by(desc(Article.id)).limit(200).all()
+        return Article.query.order_by(desc(Article.id)).limit(300).all()
 
     @staticmethod
     def get_articles_by_feed_id(feed_id):
+        """
+        Returns all articles in selected feed as array
+        """
+        return Article.query.filter_by(feed_id=feed_id).order_by(desc(Article.id)).limit(300).all()
+
+    @staticmethod
+    def get_all_articles_by_feed_id(feed_id):
         """
         Returns all articles in selected feed as array
         """
@@ -149,6 +168,22 @@ class Article(db.Model):
         """
         Article.query.filter_by(feed_id=feed_id).delete()
         db.session.commit()
+        return True
+
+    @staticmethod
+    def cleanup():
+        """
+        Cleanup DB
+        """
+        for feed in Feed.get_all_feeds():
+            all_articles = Article.get_all_articles_by_feed_id(feed.id)
+            print(f"{feed.id} / {feed.name} / articles:", len(all_articles))
+
+            del_articles = Article.query.filter_by(feed_id=feed.id).order_by(
+                desc(Article.id)).offset(300)
+            for article in del_articles:
+                Article.query.filter_by(id=article.id).delete()
+            db.session.commit()
         return True
 
 

@@ -21,6 +21,11 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+@app.route("/")
+def index():
+    return redirect(url_for("items_index"))
+
+
 @app.route("/login", methods=["GET", "POST"])
 @templated()
 def login():
@@ -40,12 +45,6 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/")
-@login_required
-def index():
-    return redirect(url_for("feeds_articles"))
-
-
 @app.route("/feeds", methods=["GET", "POST"])
 @login_required
 @templated()
@@ -54,7 +53,7 @@ def feeds_index():
     if AddFeedForm().validate_on_submit():
         Feed.add_feed(form.data["name"], form.data["url"], True)
         flash("Feed has been added", "success")
-    return dict(feeds=Feed.get_all_feeds(), form=form)
+    return dict(feeds=Feed.get_all_feeds_by_date(), form=form)
 
 
 @app.route("/feeds/edit/<feed_id>", methods=["GET", "POST"])
@@ -88,7 +87,7 @@ def feeds_delete(feed_id):
 @templated()
 def feeds_download(feed_id):
     if feed_id is None or feed_id == "all":
-        feeds = Feed.get_all_feeds()
+        feeds = Feed.get_all_feeds_by_date()
         print(feeds)
     else:
         feeds = Feed.get_feed_by_id(feed_id)
@@ -105,10 +104,13 @@ def feeds_download(feed_id):
 
 @app.route("/feeds/refresh", methods=["GET"])
 def feeds_refresh():
-    feeds = Feed.get_all_feeds()
+    import time
+    feeds = Feed.get_all_feeds_by_date()
     articles_list = []
     for feed in feeds:
+        print("Refreshing feed:", feed.id, feed.url)
         articles = download_articles(feed.url, feed.id)
+        time.sleep(30)
         articles_list += articles
 
     return "".join(articles_list)
@@ -141,3 +143,38 @@ def search():
         articles = Article.get_all_articles()
 
     return dict(articles=articles, search_query=search_query)
+
+
+@app.route("/items", defaults={"feed_id": None}, methods=["GET"])
+@app.route("/items/<feed_id>/")
+@templated("items_index.html")
+def items_index(feed_id):
+    if feed_id is None:
+        articles = Article.get_last_articles()
+        feed_name = "All"
+    else:
+        feed_name = Feed.get_feed_by_id(feed_id)[0].name
+        articles = Article.get_articles_by_feed_id(feed_id)
+    return dict(articles=articles, feeds=Feed.get_all_feeds(), feed_name=feed_name)
+
+
+@app.route("/items-search", methods=["GET", "POST"])
+@templated("items_index.html")
+def items_search():
+    if request.method == "POST":
+        form = SearchForm()
+        search_query = form.data["article_text"]
+        articles = Article.query.filter(
+            Article.summary.ilike(f"%{search_query}%")
+        ).all()
+    else:
+        search_query = False
+        articles = Article.get_all_articles()
+
+    return dict(articles=articles, search_query=search_query, feeds=Feed.get_all_feeds())
+
+
+@app.route("/cleanup", methods=["GET"])
+def cleanup():
+    Article.cleanup()
+    return "Cleanup Done"
