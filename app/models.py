@@ -28,7 +28,7 @@ class Feed(db.Model):
     url = db.Column(db.Text)
     show_in_feed = db.Column(db.BOOLEAN)
     updated = db.Column(db.DateTime, default=datetime.utcnow())
-    articles = db.relationship("Article", cascade="all, delete-orphan", single_parent=True)
+    articles = db.relationship("Article", cascade="all, delete-orphan", single_parent=True, overlaps="articles")
 
     def __repr__(self):
         return repr([self.id, self.name, self.url, self.show_in_feed])
