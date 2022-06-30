@@ -24,12 +24,13 @@ class Feed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     url = db.Column(db.Text)
+    show_in_feed = db.Column(db.BOOLEAN)
 
     def __repr__(self):
-        return repr([self.id, self.name, self.url])
+        return repr([self.id, self.name, self.url, self.show_in_feed])
 
     @staticmethod
-    def add_feed(name, url):
+    def add_feed(name, url, show_in_feed):
         """
         Add feed to DB.
         Field feed.id is automatically added by DB engine
@@ -37,6 +38,7 @@ class Feed(db.Model):
         new_feed = Feed()
         new_feed.name = name
         new_feed.url = url
+        new_feed.show_in_feed = show_in_feed
         try:
             db.session.add(new_feed)
             db.session.commit()
@@ -46,7 +48,7 @@ class Feed(db.Model):
             return False
 
     @staticmethod
-    def edit_feed(feed_id, feed_name, feed_url):
+    def edit_feed(feed_id, feed_name, feed_url, show_in_feed):
         """
         Edit selected feed based on feed_id
         Change only feed.name and feed.url
@@ -54,6 +56,7 @@ class Feed(db.Model):
         feed = Feed.query.filter_by(id=feed_id).first()
         feed.name = feed_name
         feed.url = feed_url
+        feed.show_in_feed = show_in_feed
         try:
             db.session.commit()
             return True

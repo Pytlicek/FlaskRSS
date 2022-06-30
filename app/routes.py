@@ -63,7 +63,7 @@ def feeds_index():
 def feeds_edit(feed_id):
     form = AddFeedForm()
     if form.validate_on_submit():
-        Feed.edit_feed(feed_id, form.data["name"], form.data["url"])
+        Feed.edit_feed(feed_id, form.data["name"], form.data["url"], form.data["show_in_feed"])
         flash("Feed has been changed", "success")
         return redirect(url_for("feeds_index"))
 

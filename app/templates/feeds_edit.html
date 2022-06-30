@@ -6,7 +6,12 @@
     <form method="POST" action="" class="col-md-12">
         {{ form.hidden_tag() }}
         <div class="row">
-            <div class="col-md-4 mb-3">
+            <div class="col-md-1 mb-1">
+                <label for="show_in_feed">{{ form.show_in_feed.label }}</label>
+                <input class="checkbox-lg" type="checkbox" id="show_in_feed" name="show_in_feed" {% if feed_data.show_in_feed %}checked{% else %}{% endif %}>
+            </div>
+            <div class="col-md-3 mb-2">
+
                 <label for="name">{{ form.name.label }}</label>
                 {{ form.name(class_="form-control", size=50, required='required', value=feed_data.name) }}
                 <div class="invalid-feedback">Name is required.</div>
@@ -14,7 +19,9 @@
             <div class="col-md-6 mb-3">
                 <label for="url">{{ form.url.label }}</label>
                 {{ form.url(class_="form-control", size=150, required='required', value=feed_data.url) }}
+
                 <div class="invalid-feedback">URL name is required.</div>
+
             </div>
         </div>
         <div class="row col-md-3 mb-2">
