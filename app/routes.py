@@ -93,7 +93,6 @@ def feeds_delete(feed_id):
 def feeds_download(feed_id):
     if feed_id is None or feed_id == "all":
         feeds = Feed.get_all_feeds_by_date()
-        print(feeds)
     else:
         feeds = Feed.get_feed_by_id(feed_id)
 
