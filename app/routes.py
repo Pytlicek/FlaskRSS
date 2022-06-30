@@ -52,7 +52,7 @@ def index():
 def feeds_index():
     form = AddFeedForm()
     if AddFeedForm().validate_on_submit():
-        Feed.add_feed(form.data["name"], form.data["url"])
+        Feed.add_feed(form.data["name"], form.data["url"], True)
         flash("Feed has been added", "success")
     return dict(feeds=Feed.get_all_feeds(), form=form)
 
