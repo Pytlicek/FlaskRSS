@@ -19,9 +19,9 @@
                         <td>{{ item.name }}</td>
                         <td><a href="{{ item.url }}" target="_blank">{{ item.url }}</a></td>
                         <td style="text-align:right">
-                            {% if item.show_in_feed %}<span data-feather="check-square"></span>{% else %}<span data-feather="slash"></span>{% endif %}
                             <a href="{{ url_for('feeds_edit', feed_id=item.id) }}"> <span data-feather="edit"></span></a>
                             <a href="{{ url_for('feeds_delete', feed_id=item.id) }}"> <span data-feather="trash"></span></a>
+                            {% if item.show_in_feed %}<span data-feather="check-square"></span>{% else %}<span data-feather="slash"></span>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}
