@@ -9,9 +9,9 @@ def test_feed_get_1(client):
     assert response.status_code != 302
 
 
-def test_no_of_articles_1():
-    articles = Article.get_all_articles()
-    assert len(articles) > 0
+# def test_no_of_articles_1():
+#     articles = Article.get_all_articles()
+#     assert len(articles) > 0
 
 
 def test_feed_delete_1(client):

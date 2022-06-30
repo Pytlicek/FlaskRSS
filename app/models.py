@@ -119,7 +119,7 @@ class Article(db.Model):
         db.Integer,
         db.ForeignKey("feed.id", onupdate="CASCADE", ondelete="CASCADE"),
     )
-    feed = db.relationship(Feed, backref='article')
+    feed = db.relationship(Feed, backref='article', overlaps="articles")
 
     def __repr__(self):
         return repr([self.id, self.url, self.title])
