@@ -7,7 +7,7 @@ def test_index_path(client):
     assert response.status_code == 200
     assert response.status_code != 302
     assert "Login" in str(response.data)
-    assert "Articles:" not in str(response.data)
+    assert "Search:" not in str(response.data)
 
 
 def test_feed_path_unauthorized(client):
@@ -27,5 +27,5 @@ def test_login_path(client):
         follow_redirects=True,
     )
     assert "Articles:" in str(response.data)
-    assert "No articles found" in str(response.data)
-    assert "Sign out admin" in str(response.data)
+    assert "No items found" in str(response.data)
+    assert "Search:" in str(response.data)
