@@ -27,8 +27,10 @@ class User(UserMixin, db.Model):
     @staticmethod
     def get_blocked_words():
         user = User.query.filter_by(id=0).first()
-        blocked_words = user.blocked_words
-        return blocked_words.replace(" ", "").split(",")
+        blocked_words = user.blocked_words.lower()
+        blocked_words = blocked_words.replace(" ", "").split(",")
+        blocked_words = [x for x in blocked_words if x]
+        return blocked_words
 
 
 class Feed(db.Model):
@@ -230,14 +232,14 @@ def download_articles(feed_url, feed_id):
     """
 
     if feed_id == 0:
-        print("Skipping Trash Feed")
+        # print("Skipping Trash Feed")
         return []
 
     feed_data = requests.get(feed_url)
     NewsFeed = feedparser.parse(feed_data.text)
     feed_problem = "title" not in NewsFeed.feed
     if feed_problem:
-        return "Rate limit or invalid RSS: " + str(feed_url) + str("\n")
+        return f"Rate limit or invalid RSS: {str(feed_url)}" + "\n"
 
     articles_added = []
     for entry in NewsFeed.entries:
@@ -251,8 +253,8 @@ def download_articles(feed_url, feed_id):
             article.feed_id = feed_id
 
             for blocked_word in User.get_blocked_words():
-                if blocked_word.lower() in str(entry.title).lower():
-                    print(f"Blocked word {blocked_word.upper()}: in '{entry.title}'")
+                if blocked_word in str(entry.title).lower():
+                    # print(f"Blocked word {blocked_word.upper()}: in '{entry.title}'")
                     article.feed_id = 0
             try:
                 db.session.add(article)
@@ -261,8 +263,4 @@ def download_articles(feed_url, feed_id):
             except Exception as e:
                 print("Article adding error:", e)
                 db.session.rollback()
-    return (
-        ["Articles downloaded for: {}\n".format(feed_url)]
-        if len(articles_added) < 1
-        else articles_added
-    )
+    return articles_added or [f"Articles downloaded for: {feed_url}\n"]
