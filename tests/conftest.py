@@ -1,6 +1,6 @@
 import pytest
 from app import app, db
-from app.models import User
+from app.models import User, Feed
 from flask_bcrypt import generate_password_hash
 from datetime import datetime
 
@@ -12,10 +12,20 @@ db.drop_all()
 db.create_all()
 
 user_1 = User()
-user_1.id = 1
+user_1.id = 0
 user_1.username = "admin"
 user_1.password = generate_password_hash("admin").decode("utf8")
+user_1.blocked_words = "NON_EXISTING_WORD"
 db.session.add(user_1)
+db.session.commit()
+
+feed_0 = Feed()
+feed_0.id = 0
+feed_0.name = "Trash"
+feed_0.url = "http://trash"
+feed_0.show_in_feed = 0
+feed_0.updated = datetime.now()
+db.session.add(feed_0)
 db.session.commit()
 
 

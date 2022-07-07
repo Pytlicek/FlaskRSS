@@ -26,11 +26,15 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     def get_blocked_words():
-        user = User.query.filter_by(id=0).first()
-        blocked_words = user.blocked_words.lower()
-        blocked_words = blocked_words.replace(" ", "").split(",")
-        blocked_words = [x for x in blocked_words if x]
-        return blocked_words
+        try:
+            user = User.query.filter_by(id=0).first()
+            blocked_words = user.blocked_words.lower()
+            blocked_words = blocked_words.replace(" ", "").split(",")
+            blocked_words = [x for x in blocked_words if x]
+            return blocked_words
+        except Exception as e:
+            print(e)
+            return []
 
 
 class Feed(db.Model):
