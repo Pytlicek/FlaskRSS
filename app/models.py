@@ -38,15 +38,16 @@ class User(UserMixin, db.Model):
 
 
 class Feed(db.Model):
-    __tablename__ = 'feed'
+    __tablename__ = "feed"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     url = db.Column(db.Text)
     show_in_feed = db.Column(db.BOOLEAN)
     updated = db.Column(db.DateTime, default=datetime.utcnow())
-    articles = db.relationship("Article", cascade="all, delete-orphan",
-                               single_parent=True)
+    articles = db.relationship(
+        "Article", cascade="all, delete-orphan", single_parent=True
+    )
 
     def __repr__(self):
         return repr([self.id, self.name, self.url, self.show_in_feed])
@@ -126,7 +127,7 @@ class Feed(db.Model):
 
 
 class Article(db.Model):
-    __tablename__ = 'article'
+    __tablename__ = "article"
 
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.Text)
@@ -137,7 +138,7 @@ class Article(db.Model):
         db.Integer,
         db.ForeignKey("feed.id", onupdate="CASCADE", ondelete="CASCADE"),
     )
-    feed = db.relationship(Feed, backref='article')
+    feed = db.relationship(Feed, backref="article")
 
     def __repr__(self):
         return repr([self.id, self.url, self.title])
@@ -163,8 +164,8 @@ class Article(db.Model):
         Returns last 300 articles in all feeds as array
         """
         return (
-            Article.query.join(Article, Feed.articles).filter(
-                Feed.show_in_feed == True)
+            Article.query.join(Article, Feed.articles)
+            .filter(Feed.show_in_feed == True)
             .order_by(desc(Article.id))
             .limit(300)
             .all()

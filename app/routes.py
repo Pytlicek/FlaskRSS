@@ -4,7 +4,7 @@ from flask_login import (
     login_required,
     login_user,
     logout_user,
-    current_user
+    current_user,
 )
 
 from app import app
@@ -56,7 +56,9 @@ def feeds_index():
         Feed.add_feed(form.data["name"], form.data["url"], True)
         flash("Feed has been added", "success")
     if BlockedWordsForm().validate_on_submit():
-        blocked_words = bw_form.data.get('blocked_words', current_user.blocked_words)
+        blocked_words = bw_form.data.get(
+            "blocked_words", current_user.blocked_words
+        )
         User.add_blocked_words(current_user, blocked_words)
     return dict(feeds=Feed.get_all_feeds_by_date(), form=form, bw_form=bw_form)
 
