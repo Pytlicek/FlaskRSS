@@ -20,3 +20,10 @@ class SearchForm(FlaskForm):
     article_text = StringField(
         "Search", validators=[DataRequired(), Length(max=60)]
     )
+
+
+class BlockedWordsForm(FlaskForm):
+    blocked_words = StringField(
+        "Blocked Words (Separated by comma ',')", validators=[DataRequired()]
+    )
+    submit = SubmitField("Add Blocked Word")

@@ -55,4 +55,23 @@
         </form>
     </div>
 
+    <hr>
+
+    <div class="row">
+        <form method="POST" action="" class="col-md-12">
+            <h3>Blocked words:</h3>
+            {{ bw_form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="name">{{ bw_form.blocked_words.label }}</label>
+                    {{ bw_form.blocked_words(class_="form-control", size=50, required='required', value=current_user.blocked_words) }}
+                    <div class="invalid-feedback">Input is required.</div>
+                </div>
+            </div>
+            <div class="row col-md-3 mb-2">
+                {{ bw_form.submit(class_="btn btn-primary btn-lg btn-block") }}
+            </div>
+        </form>
+    </div>
+
 {% endblock %}

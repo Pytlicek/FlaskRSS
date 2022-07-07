@@ -4,10 +4,11 @@ from flask_login import (
     login_required,
     login_user,
     logout_user,
+    current_user
 )
 
 from app import app
-from app.forms import LoginForm, AddFeedForm, SearchForm
+from app.forms import LoginForm, AddFeedForm, SearchForm, BlockedWordsForm
 from app.helpers import templated
 from app.models import User, Feed, Article, download_articles
 
@@ -50,10 +51,14 @@ def logout():
 @templated()
 def feeds_index():
     form = AddFeedForm()
+    bw_form = BlockedWordsForm()
     if AddFeedForm().validate_on_submit():
         Feed.add_feed(form.data["name"], form.data["url"], True)
         flash("Feed has been added", "success")
-    return dict(feeds=Feed.get_all_feeds_by_date(), form=form)
+    if BlockedWordsForm().validate_on_submit():
+        blocked_words = bw_form.data.get('blocked_words', current_user.blocked_words)
+        User.add_blocked_words(current_user, blocked_words)
+    return dict(feeds=Feed.get_all_feeds_by_date(), form=form, bw_form=bw_form)
 
 
 @app.route("/feeds/edit/<feed_id>", methods=["GET", "POST"])

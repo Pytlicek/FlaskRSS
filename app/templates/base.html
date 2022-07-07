@@ -33,20 +33,40 @@
         <nav id="sidebarMenu" class="col-md-2 col-lg-1 d-md-block bg-light sidebar collapse">
             <div class="sidebar-sticky pt-3">
                 <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('feeds_articles') }}">
-                            <span data-feather="file-text"></span>
-                            Articles
-                        </a>
-                    </li>
+                    <a href="{{ url_for('items_index') }}"
+                       class="nav-link">All</a>
+                    {% for item in feeds | sort(attribute='name') %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('items_index', feed_id=item.id) }}"
+                               class="nav-link">{{ item.name }}</a>
+                        </li>
+                    {% endfor %}
+
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('feeds_index') }}">
                             <span data-feather="rss"></span>
                             Feeds
                         </a>
                     </li>
+
                 </ul>
             </div>
+{#            <div class="sidebar-sticky pt-3">#}
+{#                <ul class="nav flex-column">#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ url_for('feeds_articles') }}">#}
+{#                            <span data-feather="file-text"></span>#}
+{#                            Articles#}
+{#                        </a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{{ url_for('feeds_index') }}">#}
+{#                            <span data-feather="rss"></span>#}
+{#                            Feeds#}
+{#                        </a>#}
+{#                    </li>#}
+{#                </ul>#}
+{#            </div>#}
         </nav>
 
         <main role="main" class="col-md-10 ml-sm-auto col-lg-11 px-md-4">

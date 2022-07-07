@@ -11,6 +11,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(128))
+    blocked_words = db.Column(db.TEXT)
 
     def verify_password(self, password):
         """
@@ -18,6 +19,10 @@ class User(UserMixin, db.Model):
         Returns True or False
         """
         return check_password_hash(self.password, password)
+
+    def add_blocked_words(self, blocked_words):
+        self.blocked_words = blocked_words
+        db.session.commit()
 
 
 class Feed(db.Model):
@@ -28,7 +33,8 @@ class Feed(db.Model):
     url = db.Column(db.Text)
     show_in_feed = db.Column(db.BOOLEAN)
     updated = db.Column(db.DateTime, default=datetime.utcnow())
-    articles = db.relationship("Article", cascade="all, delete-orphan", single_parent=True, overlaps="articles")
+    articles = db.relationship("Article", cascade="all, delete-orphan",
+                               single_parent=True, overlaps="articles")
 
     def __repr__(self):
         return repr([self.id, self.name, self.url, self.show_in_feed])
@@ -145,7 +151,8 @@ class Article(db.Model):
         Returns last 300 articles in all feeds as array
         """
         return (
-            Article.query.join(Article, Feed.articles).filter(Feed.show_in_feed == True)
+            Article.query.join(Article, Feed.articles).filter(
+                Feed.show_in_feed == True)
             .order_by(desc(Article.id))
             .limit(300)
             .all()
