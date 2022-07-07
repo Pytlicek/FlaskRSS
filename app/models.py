@@ -24,6 +24,12 @@ class User(UserMixin, db.Model):
         self.blocked_words = blocked_words
         db.session.commit()
 
+    @staticmethod
+    def get_blocked_words():
+        user = User.query.filter_by(id=0).first()
+        blocked_words = user.blocked_words
+        return blocked_words.replace(" ", "").split(",")
+
 
 class Feed(db.Model):
     __tablename__ = 'feed'
@@ -223,6 +229,10 @@ def download_articles(feed_url, feed_id):
     Returns list of newly added articles
     """
 
+    if feed_id == 0:
+        print("Skipping Trash Feed")
+        return []
+
     feed_data = requests.get(feed_url)
     NewsFeed = feedparser.parse(feed_data.text)
     feed_problem = "title" not in NewsFeed.feed
@@ -232,17 +242,24 @@ def download_articles(feed_url, feed_id):
     articles_added = []
     for entry in NewsFeed.entries:
         if Article.get_article_by_url(entry.link) is None:
+
             article = Article()
             article.url = entry.link
             article.title = entry.title
             article.summary = str(entry.summary)
             article.published = datetime.now()
             article.feed_id = feed_id
+
+            for blocked_word in User.get_blocked_words():
+                if blocked_word.lower() in str(entry.title).lower():
+                    print(f"Blocked word {blocked_word.upper()}: in '{entry.title}'")
+                    article.feed_id = 0
             try:
                 db.session.add(article)
                 db.session.commit()
                 articles_added.append(article.url)
-            except:
+            except Exception as e:
+                print("Article adding error:", e)
                 db.session.rollback()
     return (
         ["Articles downloaded for: {}\n".format(feed_url)]
