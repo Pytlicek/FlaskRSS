@@ -34,7 +34,7 @@ class Feed(db.Model):
     show_in_feed = db.Column(db.BOOLEAN)
     updated = db.Column(db.DateTime, default=datetime.utcnow())
     articles = db.relationship("Article", cascade="all, delete-orphan",
-                               single_parent=True, overlaps="articles")
+                               single_parent=True)
 
     def __repr__(self):
         return repr([self.id, self.name, self.url, self.show_in_feed])
@@ -125,7 +125,7 @@ class Article(db.Model):
         db.Integer,
         db.ForeignKey("feed.id", onupdate="CASCADE", ondelete="CASCADE"),
     )
-    feed = db.relationship(Feed, backref='article', overlaps="articles")
+    feed = db.relationship(Feed, backref='article')
 
     def __repr__(self):
         return repr([self.id, self.url, self.title])
